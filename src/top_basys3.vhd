@@ -25,7 +25,7 @@ end top_basys3;
 architecture top_basys3_arch of top_basys3 is
 
     -- signal declarations
-    ----also editing here
+    ----added signals
     signal w_o_floor1 : std_logic_vector(3 downto 0);
     signal w_o_floor2 : std_logic_vector(3 downto 0);
     signal w_BtnUorBtnL : std_logic;
@@ -82,6 +82,7 @@ begin
 	-- PORT MAPS ----------------------------------------
     	
 	--This is the part I am editing---
+	
 	clk_dividerfast: clock_divider
         generic map (k_DIV => 200000)  --500 Hz
         port map (
@@ -89,8 +90,7 @@ begin
             i_reset => w_BtnUorBtnL,             -- clock reset
             o_clk   => w_clk_fast
         );
-        --need another clock divider?
-   
+       --second clock
        clk_dividerslow: clock_divider
         generic map (k_DIV => 25000000)  --2 Hz
         port map (
@@ -98,6 +98,7 @@ begin
             i_reset => w_BtnUorBtnL,             -- clock reset
             o_clk   => w_clk_divider
         );
+        --evelator 1
     elevator1 : elevator_controller_fsm
 		port map (
             i_clk => w_clk_divider,
@@ -106,6 +107,7 @@ begin
             go_up_down => sw(1),
             o_floor => w_o_floor1
         );
+        --elevator 2
     elevator2 : elevator_controller_fsm
 		port map (
             i_clk => w_clk_divider,
@@ -134,8 +136,9 @@ begin
 	-- CONCURRENT STATEMENTS ----------------------------
 	
 	-- LED 15 gets the FSM slow clock signal. The rest are grounded.
-	   led(14 downto 0) <= (others => '0');
 	   led(15) <= w_clk_divider ;
+	   led(14 downto 0) <= (others => '0');
+	   
 	
 	-- leave unused switches UNCONNECTED. Ignore any warnings this causes.
 	
